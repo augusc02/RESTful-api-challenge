@@ -36,7 +36,8 @@ class TransactionControllerTest {
                 mockMvc.perform(put(BASE_URL + "/" + 10)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("ok"));
     }
 
     @Test
@@ -50,7 +51,7 @@ class TransactionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
+                .andExpect(jsonPath("$.status").value("ok"));
 
         TransactionRequest updateRequest = new TransactionRequest();
         updateRequest.setAmount(250.0);
@@ -60,7 +61,8 @@ class TransactionControllerTest {
         mockMvc.perform(put(BASE_URL + "/" + 20)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
-                                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("ok"));
     }
 
     @Test
@@ -98,6 +100,7 @@ class TransactionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("ok"))
                 .andReturn().getResponse().getContentAsString();
     }
 }
