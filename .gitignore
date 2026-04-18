@@ -7,3 +7,6 @@ target/
 .idea
 
 .DS_Store
+
+boot.log
+boot.pid
