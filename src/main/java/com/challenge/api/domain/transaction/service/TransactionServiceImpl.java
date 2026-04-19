@@ -14,10 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -63,12 +65,21 @@ public class TransactionServiceImpl implements TransactionService {
         log.debug("Computing sum for transaction id: {}", id);
         double total = 0;
         Queue<Transaction> queue = new LinkedList<>();
-        queue.add(transactionRepository.findByIdOrThrow(id));
+        Set<Long> visited = new HashSet<>();
+        
+        Transaction initialTransaction = transactionRepository.findByIdOrThrow(id);
+        queue.add(initialTransaction);
+        visited.add(initialTransaction.getId());
         
         while (!queue.isEmpty()) {
             Transaction current = queue.poll();
             total += current.getAmount();
-            queue.addAll(transactionRepository.findByParentId(current.getId()));
+            
+            for (Transaction child : transactionRepository.findByParentId(current.getId())) {
+                if (visited.add(child.getId())) {
+                    queue.add(child);
+                }
+            }
         }
         
         return total;
