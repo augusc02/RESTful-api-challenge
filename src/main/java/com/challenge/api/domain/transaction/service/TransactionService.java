@@ -25,7 +25,4 @@ public interface TransactionService {
 
     // Creates or updates a transaction manually by id. Returns true if it was newly created.
     boolean putTransaction(Long id, TransactionRequest request);
-
-    // Removes the transaction
-    void delete(Long id);
 }

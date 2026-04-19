@@ -5,7 +5,6 @@ import com.challenge.api.domain.transaction.dto.TransactionResponse;
 import com.challenge.api.domain.transaction.mapper.TransactionMapper;
 import com.challenge.api.domain.transaction.model.Transaction;
 import com.challenge.api.domain.transaction.repository.TransactionRepository;
-import com.challenge.api.domain.transaction.exception.TransactionNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -87,15 +86,5 @@ public class TransactionServiceImpl implements TransactionService {
         transactionRepository.save(transaction);
         log.info("Transaction {} with id: {}", isNew ? "created" : "updated", id);
         return isNew;
-    }
-
-    @Override
-    @Transactional
-    public void delete(Long id) {
-        if (!transactionRepository.existsById(id)) {
-            throw new TransactionNotFoundException(id);
-        }
-        transactionRepository.deleteById(id);
-        log.info("Transaction deleted with id: {}", id);
     }
 }
