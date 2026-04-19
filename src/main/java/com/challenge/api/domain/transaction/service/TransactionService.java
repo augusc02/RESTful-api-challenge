@@ -4,6 +4,9 @@ import com.challenge.api.domain.transaction.dto.TransactionRequest;
 import com.challenge.api.domain.transaction.dto.TransactionResponse;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 
 
 public interface TransactionService {
@@ -23,6 +26,6 @@ public interface TransactionService {
     // Calculates the sum of all transaction amounts transitively
     Double sumByTransactionId(Long id);
 
-    // Creates or updates a transaction manually by id. Returns true if it was newly created.
-    boolean putTransaction(Long id, TransactionRequest request);
+    // Creates or updates a transaction manually by id. Returns the ResponseEntity with the status.
+    ResponseEntity<Map<String, String>> putTransaction(Long id, TransactionRequest request);
 }

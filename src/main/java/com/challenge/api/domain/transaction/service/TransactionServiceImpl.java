@@ -7,11 +7,15 @@ import com.challenge.api.domain.transaction.model.Transaction;
 import com.challenge.api.domain.transaction.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 @Slf4j
@@ -71,7 +75,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional
-    public boolean putTransaction(Long id, TransactionRequest request) {
+    public ResponseEntity<Map<String, String>> putTransaction(Long id, TransactionRequest request) {
         boolean isNew = !transactionRepository.existsById(id);
         Transaction transaction;
         
@@ -85,6 +89,8 @@ public class TransactionServiceImpl implements TransactionService {
         
         transactionRepository.save(transaction);
         log.info("Transaction {} with id: {}", isNew ? "created" : "updated", id);
-        return isNew;
+        
+        HttpStatus status = isNew ? HttpStatus.CREATED : HttpStatus.OK;
+        return ResponseEntity.status(status).body(Map.of("status", "ok"));
     }
 }
