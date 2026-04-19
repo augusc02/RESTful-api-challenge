@@ -96,6 +96,9 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction;
         
         if (isNew) {
+            if (request.getParentId() == null) {
+                request.setParentId(0L);
+            }
             transaction = transactionMapper.toEntity(request);
             transaction.setId(id);
         } else {

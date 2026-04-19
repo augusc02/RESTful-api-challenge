@@ -21,7 +21,6 @@ public class TransactionRequest {
     @Schema(description = "Category or type label for the transaction", requiredMode = Schema.RequiredMode.REQUIRED)
     private String type;
 
-    @NotNull(message = "Parent id is required")
     @Schema(description = "Id of the parent transaction. Use 0 if there is no parent.")
     @JsonProperty("parent_id")
     private Long parentId;
