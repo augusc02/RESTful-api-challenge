@@ -4,6 +4,7 @@ import com.challenge.api.domain.transaction.dto.TransactionRequest;
 import com.challenge.api.domain.transaction.dto.TransactionResponse;
 import com.challenge.api.domain.transaction.mapper.TransactionMapper;
 import com.challenge.api.domain.transaction.model.Transaction;
+import com.challenge.api.domain.transaction.exception.SelfReferencingTransactionException;
 import com.challenge.api.domain.transaction.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,6 +77,10 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional
     public ResponseEntity<Map<String, String>> putTransaction(Long id, TransactionRequest request) {
+        if (id.equals(request.getParentId())) {
+            throw new SelfReferencingTransactionException(id);
+        }
+
         boolean isNew = !transactionRepository.existsById(id);
         Transaction transaction;
         
