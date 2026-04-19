@@ -1,5 +1,6 @@
 package com.challenge.api.domain.transaction.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Value;
@@ -19,5 +20,6 @@ public class TransactionResponse {
     String type;
 
     @Schema(description = "Id of the parent transaction, or 0 if none", example = "0")
+    @JsonProperty("parent_id")
     Long parentId;
 }

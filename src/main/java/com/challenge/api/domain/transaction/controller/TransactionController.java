@@ -12,6 +12,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 
 import java.util.List;
 
@@ -26,7 +28,19 @@ public class TransactionController {
     @GetMapping
     @Operation(
             summary = "List transactions",
-            description = "Returns all transactions"
+            description = "Returns all transactions",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "OK"
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(value = "{\"success\": false, \"message\": \"An unexpected error occurred\", \"timestamp\": \"2026-04-19T17:56:17\"}"))
+                    )
+            }
     )
     public ResponseEntity<ApiResponse<List<TransactionResponse>>> findAll() {
 
@@ -36,7 +50,27 @@ public class TransactionController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get transaction by id")
+    @Operation(
+            summary = "Get transaction by id",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "OK"
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "404",
+                            description = "Transaction not found",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(value = "{\"success\": false, \"message\": \"Transaction not found: 123\", \"timestamp\": \"2026-04-19T17:56:17\"}"))
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(value = "{\"success\": false, \"message\": \"An unexpected error occurred\", \"timestamp\": \"2026-04-19T17:56:17\"}"))
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<TransactionResponse>> findById(
             @Parameter(description = "Transaction id", required = true)
             @PathVariable Long id) {
@@ -47,7 +81,19 @@ public class TransactionController {
     @GetMapping("/types/{type}")
     @Operation(
             summary = "Get transaction ids by type",
-            description = "Returns a list of ids of all transactions matching the given type"
+            description = "Returns a list of ids of all transactions matching the given type",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "OK"
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(value = "{\"success\": false, \"message\": \"An unexpected error occurred\", \"timestamp\": \"2026-04-19T17:56:17\"}"))
+                    )
+            }
     )
     public ResponseEntity<ApiResponse<List<Long>>> findIdsByType(
             @Parameter(description = "Transaction type (e.g. 'car', 'shopping')", required = true)
@@ -59,7 +105,27 @@ public class TransactionController {
     @GetMapping("/sum/{id}")
     @Operation(
             summary = "Get sum of a transaction subtree",
-            description = "Returns {\"sum\": <double>} with the total amount of the transaction and all its transitive children"
+            description = "Returns {\"sum\": <double>} with the total amount of the transaction and all its transitive children",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(value = "{\"success\": true, \"data\": {\"sum\": 5000.0}, \"timestamp\": \"2026-04-19T19:38:38.447905335\"}"))
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "404",
+                            description = "Transaction not found",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(value = "{\"success\": false, \"message\": \"Transaction not found: 123\", \"timestamp\": \"2026-04-19T17:56:17\"}"))
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(value = "{\"success\": false, \"message\": \"An unexpected error occurred\", \"timestamp\": \"2026-04-19T17:56:17\"}"))
+                    )
+            }
     )
     public ResponseEntity<ApiResponse<java.util.Map<String, Double>>> sum(@PathVariable Long id) {
         Double total = transactionService.sumByTransactionId(id);
@@ -67,7 +133,38 @@ public class TransactionController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Create or update a transaction")
+    @Operation(
+            summary = "Create or update a transaction",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "Transaction updated",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(value = "{\"status\": \"ok\"}"))
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "201",
+                            description = "Transaction created",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(value = "{\"status\": \"ok\"}"))
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "400",
+                            description = "Bad request",
+                            content = @Content(mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Self-referencing", value = "{\"success\": false, \"message\": \"Self-referencing transaction: 123\", \"timestamp\": \"2026-04-19T17:56:17\"}"),
+                                            @ExampleObject(name = "Validation error", value = "{\"success\": false, \"message\": \"Validation failed\", \"data\": {\"amount\": \"Amount is required\"}, \"timestamp\": \"2026-04-19T17:56:17\"}")
+                                    })
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(value = "{\"success\": false, \"message\": \"An unexpected error occurred\", \"timestamp\": \"2026-04-19T17:56:17\"}"))
+                    )
+            }
+    )
     public ResponseEntity<java.util.Map<String, String>> putTransaction(
             @PathVariable Long id,
             @Valid @RequestBody TransactionRequest request) {

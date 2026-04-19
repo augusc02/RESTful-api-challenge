@@ -56,13 +56,33 @@ paths:
                       type:
                         type: string
                         example: car
-                      parentId:
+                      parent_id:
                         type: integer
                         format: int64
                         example: 0
                   timestamp:
                     type: string
                     format: date-time
+        "404":
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: {type: boolean, example: false}
+                  message: {type: string, example: "Transaction not found: 123"}
+                  timestamp: {type: string, example: "2026-04-19T17:56:17"}
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: {type: boolean, example: false}
+                  message: {type: string, example: "An unexpected error occurred"}
+                  timestamp: {type: string, example: "2026-04-19T17:56:17"}
     put:
       tags:
       - Transactions
@@ -89,7 +109,7 @@ paths:
                 type:
                   type: string
                   example: car
-                parentId:
+                parent_id:
                   type: integer
                   format: int64
                   example: 0
@@ -99,13 +119,46 @@ paths:
         required: true
       responses:
         "200":
-          description: OK
+          description: OK (Transaction updated)
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
-                additionalProperties:
-                  type: string
+                properties:
+                  status:
+                    type: string
+                    example: ok
+        "201":
+          description: Created (Transaction created)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+        "400":
+          description: Bad request (Self-referencing transaction or validation error)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: {type: boolean, example: false}
+                  message: {type: string, example: "Validation failed"}
+                  data: {type: object, additionalProperties: {type: string}}
+                  timestamp: {type: string, example: "2026-04-19T17:56:17"}
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: {type: boolean, example: false}
+                  message: {type: string, example: "An unexpected error occurred"}
+                  timestamp: {type: string, example: "2026-04-19T17:56:17"}
   /transactions:
     get:
       tags:
@@ -149,13 +202,23 @@ paths:
                         type:
                           type: string
                           example: car
-                        parentId:
+                        parent_id:
                           type: integer
                           format: int64
                           example: 0
                   timestamp:
                     type: string
                     format: date-time
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: {type: boolean, example: false}
+                  message: {type: string, example: "An unexpected error occurred"}
+                  timestamp: {type: string, example: "2026-04-19T17:56:17"}
   /transactions/types/{type}:
     get:
       tags:
@@ -190,6 +253,16 @@ paths:
                   timestamp:
                     type: string
                     format: date-time
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: {type: boolean, example: false}
+                  message: {type: string, example: "An unexpected error occurred"}
+                  timestamp: {type: string, example: "2026-04-19T17:56:17"}
   /transactions/sum/{id}:
     get:
       tags:
@@ -219,9 +292,32 @@ paths:
                     type: string
                   data:
                     type: object
-                    additionalProperties:
-                      type: number
-                      format: double
+                    properties:
+                      sum:
+                        type: number
+                        format: double
+                        example: 5000.0
                   timestamp:
                     type: string
                     format: date-time
+                    example: "2026-04-19T19:38:38.447905335"
+        "404":
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: {type: boolean, example: false}
+                  message: {type: string, example: "Transaction not found: 123"}
+                  timestamp: {type: string, example: "2026-04-19T17:56:17"}
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: {type: boolean, example: false}
+                  message: {type: string, example: "An unexpected error occurred"}
+                  timestamp: {type: string, example: "2026-04-19T17:56:17"}
