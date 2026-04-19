@@ -1,0 +1,23 @@
+# Build artifacts (built inside Docker, not needed in context)
+target/
+
+# Version control
+.git/
+.gitignore
+
+# IDE / editor files
+.idea/
+*.iml
+.vscode/
+
+# Docker files
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Documentation & misc
+README.md
+*.log
+*.pid
+openapi.json
+openapi.yaml
